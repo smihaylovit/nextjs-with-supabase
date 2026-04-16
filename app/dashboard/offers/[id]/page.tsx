@@ -3,7 +3,8 @@ import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import { OfferDetailClient } from './_components/offer-detail-client'
 
-async function OfferDetail({ id }: { id: string }) {
+async function OfferDetail({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const supabase = await createClient()
 
   const { data: offer } = await supabase
@@ -17,17 +18,15 @@ async function OfferDetail({ id }: { id: string }) {
   return <OfferDetailClient offer={offer} />
 }
 
-export default async function OfferDetailPage({
+export default function OfferDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>
 }) {
-  const { id } = await params
-
   return (
     <div className="p-6 max-w-4xl">
       <Suspense fallback={<p className="text-sm text-gray-400">Зарежда...</p>}>
-        <OfferDetail id={id} />
+        <OfferDetail params={params} />
       </Suspense>
     </div>
   )
